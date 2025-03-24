@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
 
 export default defineConfig({
     plugins: [
@@ -28,4 +27,18 @@ export default defineConfig({
             ],
         }),
     ],
+    build: {
+        rollupOptions: {
+            external: [
+                'node:perf_hooks',
+                'node:fs/promises',
+                'fsevents',
+            ],
+        },
+    },
+    resolve: {
+        alias: {
+            'fsevents': false,
+        },
+    },
 });

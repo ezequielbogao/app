@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        {{-- <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 p-4">
+        <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 p-4">
             <div id="loader" class="flex justify-center items-center h-32">
                 <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -32,10 +32,14 @@
                 <thead class=" text-slate-600">
                     <tr class="bg-white border-b-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
                         <x-gdd.table.th text=""/>
-                        <x-gdd.table.th text="COMERCIO"/>
-                        <x-gdd.table.th text="NOMBRE"/>
-                        <x-gdd.table.th text="RUBRO"/>
-                        <x-gdd.table.th text="CUIT"/>
+                        <x-gdd.table.th text="RECURSO" />
+                        <x-gdd.table.th text="NRO_IMPONIBLE" />
+                        <x-gdd.table.th text="CUOTA" />
+                        <x-gdd.table.th text="ANIO" />
+                        <x-gdd.table.th text="MONTO_TOTAL" />
+                        <x-gdd.table.th text="FECHA_VTO" />
+                        <x-gdd.table.th text="SITUACION" />
+                        <x-gdd.table.th text="ESTADO" />
                     </tr>
                 </thead>
                 <tbody class="text-gray-700 p-3"></tbody>
@@ -43,13 +47,13 @@
             <div class="flex justify-end">
                 <button id="submitSelected" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hidden">Generar gestión</button>
             </div>
-        </div> --}}
+        </div>
 
 	</div>
 </div>
 
 @endsection
-{{--
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('datatable/jqueryDataTables.min.css') }}">
 @endpush
@@ -69,7 +73,7 @@
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
-                body: JSON.stringify({ example: "data" })
+                body: JSON.stringify({ example: "data" }) // Esto se ajustará si necesitas enviar datos iniciales
             })
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -113,48 +117,22 @@
                             width: "1%",
                             className: "text-center",
                             render: function (data, type, row) {
-                                return `<input type="checkbox" class="checkbox" data-id="${row.NRO_COMERCIO}" ${selectedRows.has(row.NRO_COMERCIO) ? 'checked' : ''}>`;
+                                const id = `${row.RECURSO}-${row.NRO_IMPONIBLE}-${row.ANIO}-${row.CUOTA}-${row.MONTO_TOTAL}`;
+                                return `<input type="checkbox" class="checkbox" data-id="${id}"
+                                    ${selectedRows.has(id) ? 'checked' : ''}>`;
                             }
                         },
-                        {
-                            data: 'NRO_COMERCIO',
-                            render: function (data, type, row) {
-                                return `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">
-                                            ${row.NRO_COMERCIO}
-                                        </span>`;
-                            }
-                        },
-                        {
-                            data: 'NOMBRE',
-                            render: function (data, type, row) {
-                                return `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">
-                                            ${row.NOMBRE}
-                                        </span>`;
-                            }
-                        },
-                        {
-                            data: 'RUBRO',
-                            render: function (data, type, row) {
-                                return `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">
-                                            ${row.RUBRO}
-                                        </span>`;
-                            }
-                        },
-                        {
-                            data: 'CUIT',
-                            render: function (data, type, row) {
-                                return `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">
-                                            ${row.CUIT}
-                                        </span>`;
-                            }
-                        },
+                        { data: 'RECURSO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'NRO_IMPONIBLE', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'CUOTA', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'ANIO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'MONTO_TOTAL', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'FECHA_VTO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'SITUACION', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                        { data: 'ESTADO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
                     ],
-
-                    rowCallback: function(row, data, index) {
+                    rowCallback: function(row) {
                         $(row).addClass('bg-white border-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800');
-                    },
-                    paginate: {
-                        ellipsis: 'Más...'
                     },
                     drawCallback: function () {
                         stylePagination();
@@ -181,27 +159,34 @@
             $('.ellipsis').addClass('px-4 py-2 bg-slate-400 text-white rounded-lg hover:bg-slate-500');
         }
 
-        // Enviar seleccionados al backend
+        // Función para enviar los datos seleccionados por POST
         $('#submitSelected').on('click', function () {
-            const selectedArray = Array.from(selectedRows);
-            fetch("{{ route('gestion.create') }}", {
+            const selectedData = Array.from(selectedRows).map(id => {
+                const [recurso, nro, anio, cuota, total] = id.split('-');
+                return [recurso, nro, anio, cuota, total]; // Devuelve un array con los 4 valores
+            });
+
+            fetch("{{ route('gestion.create') }}", { // Ajusta la ruta según tu backend
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
-                body: JSON.stringify({ selected: selectedArray })
+                body: JSON.stringify({ selected: selectedData }) // Envía el array de arrays
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
-                if(data.success) window.location.href = "/gdd/gestion";
-                if(!data.success) console.log('error');
+                console.log('Datos enviados con éxito:', data);
+                window.location.assign("/gdd/gestion");
             })
-            .catch(error => console.error('Error enviando datos:', error));
+            .catch(error => console.error('Error submitting data:', error));
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             fetchDataAndInitializeTable();
         });
     </script>
-@endpush --}}
+@endpush

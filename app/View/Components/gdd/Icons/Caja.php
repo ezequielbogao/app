@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\gdd\Icons;
+namespace App\View\Components\Gdd\Icons;
 
 use Closure;
 use Illuminate\Contracts\View\View;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Components\gdd;
+namespace App\View\Components\Gdd;
 
 use Closure;
 use Illuminate\Contracts\View\View;

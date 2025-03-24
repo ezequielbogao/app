@@ -1,8 +1,7 @@
 @extends('gdd.layouts.main')
-
 @section('title', 'Gestión')
-
 @section('content')
+
 <div class="w-full flex h-full min-h-screen bg-white ">
 
     <div class="text-left w-full">
@@ -12,7 +11,7 @@
                     GDD
                 </span>
                 <span class="text-2xl text-slate-700 dark:text-slate-300 font-medium">
-                    Gestión de deuda
+                    Gestión
                 </span>
             </div>
             <div class="flex items-center align-center sm:mr-20 md:mr-2">
@@ -22,9 +21,42 @@
             </div>
         </div>
 
-		<div class="p-5 rounded-0">
-			asdas
-		</div>
+
+        <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 p-4">
+            <table id="gestionTable" class="gdd-table min-w-full table-auto w-full text-left p-3">
+                <thead class=" text-slate-600">
+                    <tr class="bg-white border-b-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                        <x-gdd.table.th text="ID" sm="#"/>
+                        <x-gdd.table.th text="RECURSO" sm="REC" />
+                        <x-gdd.table.th text="NRO_IMPONIBLE" sm="NRO"/>
+                        <x-gdd.table.th text="PERIODOS" sm="PERIODOS"/>
+                        <x-gdd.table.th text="MONTO_TOTAL" sm="TOTAL"/>
+                        <x-gdd.table.th text="INICIO" sm="INI"/>
+                        <x-gdd.table.th text="FINALIZACION" sm="FIN" />
+                        <x-gdd.table.th text="ESTADO" sm="EST"/>
+                        <x-gdd.table.th text="OBSERVACION" sm="OBS" />
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 p-3">
+                    @foreach($resource as $gestion)
+                        <tr class="bg-white border-b-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                            <x-gdd.table.td text="{{ $gestion->id }}" />
+                            <x-gdd.table.td text="{{ $gestion->RECURSO }}" />
+                            <x-gdd.table.td text="{{ $gestion->NRO_IMPONIBLE }}" />
+                            <x-gdd.table.td text="{{ $gestion->PERIODOS }}" />
+                            <x-gdd.table.td text="{{ $gestion->MONTO_TOTAL }}" />
+                            <x-gdd.table.td text="{{ $gestion->created_at->format('d-m-Y') }}" />
+                            <x-gdd.table.td text="{{ $gestion->FINALIZACION ? $gestion->FINALIZACION->format('d-m-Y') : '-' }}" />
+                            <x-gdd.table.td text="{{ $gestion->ESTADO }}" />
+                            <x-gdd.table.td text="{{ $gestion->OBSERVACION }}" />
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="flex justify-end">
+                <button id="submitSelected" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 hidden">Generar gestión</button>
+            </div>
+        </div>
 
 	</div>
 </div>

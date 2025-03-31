@@ -23,6 +23,12 @@
 
 
         <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 p-4">
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3" role="alert">
+                    <strong class="font-bold">Error:</strong>
+                    <span class="block sm:inline">{{ $errors->first() }}</span>
+                </div>
+            @endif
             <table id="gestionTable" class="gdd-table min-w-full table-auto w-full text-left p-3">
                 <thead class=" text-slate-600">
                     <tr class="bg-white border-b-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
@@ -35,6 +41,7 @@
                         <x-gdd.table.th text="FINALIZACION" sm="FIN" />
                         <x-gdd.table.th text="ESTADO" sm="EST"/>
                         <x-gdd.table.th text="OBSERVACION" sm="OBS" />
+                        <x-gdd.table.th text="OPCIONES" sm="OPS" />
                     </tr>
                 </thead>
                 <tbody class="text-gray-700 p-3">
@@ -49,6 +56,11 @@
                             <x-gdd.table.td text="{{ $gestion->FINALIZACION ? $gestion->FINALIZACION->format('d-m-Y') : '-' }}" />
                             <x-gdd.table.td text="{{ $gestion->ESTADO }}" />
                             <x-gdd.table.td text="{{ $gestion->OBSERVACION }}" />
+                            <x-gdd.table.td>
+                                <a href="{{route('gdd.gestiones.edit',['id' => $gestion->id])}}" class="text-slate-400 justify-center items-center hover:bg-slate-200 p-2 rounded-2xl cursor-pointer w-auto flex">
+                                    <x-gdd.icons.edit/>
+                                </a>
+                            </x-gdd.table.td>
                         </tr>
                     @endforeach
                 </tbody>

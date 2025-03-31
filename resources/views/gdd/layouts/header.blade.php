@@ -18,8 +18,8 @@
 	</div>
 	<div class="flex gap-4">
 		<a
-			to="/login"
-			class="p-2 rounded-full bg-slate-50 text-slate-800 dark:text-yellow-300 hover:bg-slate-100 dark:bg-slate-800 hover:dark:bg-slate-600 border-none focus:outline-none">
+			href="{{route('gdd.login')}}"
+			class="p-2 rounded-full cursor-pointer bg-slate-50 text-slate-800 dark:text-yellow-300 hover:bg-slate-100 dark:bg-slate-800 hover:dark:bg-slate-600 border-none focus:outline-none">
 			{{-- <Logout /> --}}
 			Salir
 		</a>

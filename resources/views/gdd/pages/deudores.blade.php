@@ -118,7 +118,7 @@
                             className: "text-center",
                             render: function (data, type, row) {
                                 const id = `${row.RECURSO}-${row.NRO_IMPONIBLE}-${row.ANIO}-${row.CUOTA}-${row.MONTO_TOTAL}`;
-                                return `<input type="checkbox" class="checkbox" data-id="${id}"
+                                return `<input type="checkbox" class="checkbox" ${row.GESTION_ID ? 'disabled' : '' }  data-id="${id}"
                                     ${selectedRows.has(id) ? 'checked' : ''}>`;
                             }
                         },
@@ -166,7 +166,7 @@
                 return [recurso, nro, anio, cuota, total]; // Devuelve un array con los 4 valores
             });
 
-            fetch("{{ route('gestion.create') }}", { // Ajusta la ruta según tu backend
+            fetch("{{ route('gdd.gestion.create') }}", { // Ajusta la ruta según tu backend
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

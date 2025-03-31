@@ -13,7 +13,7 @@
                 <x-gdd.icons.deudor width="24" height="24"/>
             </x-slot:icon>
         </x-gdd.menuBtn>
-        <x-gdd.menuBtn :to="'/gdd/gestion'" :titulo="'Gestión de deuda'">
+        <x-gdd.menuBtn :to="'/gdd/gestiones'" :titulo="'Gestiones'">
             <x-slot:icon>
                 <x-gdd.icons.caja width="24" height="24"/>
             </x-slot:icon>

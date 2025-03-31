@@ -10,9 +10,9 @@ class Td extends Component
 {
 	public $text;
 
-	public function __construct($text)
+	public function __construct($text = null)
 	{
-		$this->text = $text;
+		$this->text = $text ?? '';
 	}
 
 	public function render(): View|Closure|string

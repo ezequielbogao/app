@@ -13,13 +13,13 @@ class GestionController extends Controller
 {
 	use ApiResponse;
 
+	private $viewFolder = 'gdd.pages.';
+
 	public function index()
 	{
 		$gestiones = Gestion::all();
-
-		return view('gdd.gestion', ['resource' => $gestiones]);
+		return view($this->viewFolder . 'gestion.index', ['resource' => $gestiones]);
 	}
-
 
 	public function create(Request $r)
 	{
@@ -40,10 +40,10 @@ class GestionController extends Controller
 		$deudores = $this->formatearImponibles($r->selected);
 
 		foreach ($deudores as $deudor) {
-			$recurso = $deudor[0];
-			$nro_imponible = $deudor[1];
-			$periodos = $deudor[2];
-			$monto_total = $deudor[3];
+			$recurso 		= $deudor[0];
+			$nro_imponible 	= $deudor[1];
+			$periodos 		= $deudor[2];
+			$monto_total 	= $deudor[3];
 			Gestion::create([
 				'RECURSO'       => $recurso,
 				'NRO_IMPONIBLE' => $nro_imponible,
@@ -59,6 +59,14 @@ class GestionController extends Controller
 		return $this->apiResponse(true, null, 'Gestión creada con exito');
 	}
 
+	public function edit(Request $r)
+	{
+		$gestion = Gestion::where('id', $r->id)->first();
+
+		if (!$gestion) return to_route('gdd.gestiones.index')->withErrors(['No se encontró la gestión']);
+		return view($this->viewFolder . 'gestion.edit', ['resource' => $gestion]);
+	}
+
 	private function formatearImponibles(array $seleccionados)
 	{
 		$imponibles_agrupados = collect($seleccionados)->groupBy(function ($item) {
@@ -66,9 +74,9 @@ class GestionController extends Controller
 		});
 
 		$deudores = $imponibles_agrupados->map(function ($group) {
-			$grupo_imponible = $group[0];
-			$recurso = $grupo_imponible[0]; // TSM
-			$nro_mponible = $grupo_imponible[1]; // 1000
+			$grupo_imponible 	= $group[0];
+			$recurso 			= $grupo_imponible[0]; // TSM
+			$nro_mponible 		= $grupo_imponible[1]; // 1000
 
 			$monto_total = collect($group)->sum(function ($item) {
 				return (float)$item[4];

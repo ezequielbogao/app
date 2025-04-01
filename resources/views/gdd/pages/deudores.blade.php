@@ -180,7 +180,7 @@
             })
             .then(data => {
                 console.log('Datos enviados con éxito:', data);
-                window.location.assign("/gdd/gestion");
+                window.location.assign("/gdd/gestiones");
             })
             .catch(error => console.error('Error submitting data:', error));
         });

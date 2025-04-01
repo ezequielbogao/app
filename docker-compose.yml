@@ -1,20 +1,4 @@
 services:
-    mysql:
-        image: mysql:8.0
-        container_name: mysql-container
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: db
-            MYSQL_USER: user
-            MYSQL_PASSWORD: password
-        ports:
-            - "3306:3306"
-        volumes:
-            - mysql_data:/var/lib/mysql
-        command: --bind-address=0.0.0.0
-        networks:
-            - laravel-network
-
     laravel:
         image: laravelphp/php-fpm
         build:
@@ -23,8 +7,6 @@ services:
         container_name: laravel-container
         volumes:
             - .:/var/www/html
-        depends_on:
-            - mysql
         networks:
             - laravel-network
 

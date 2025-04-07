@@ -33,13 +33,17 @@
                     <tr class="bg-white border-b-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
                         <x-gdd.table.th text=""/>
                         <x-gdd.table.th text="RECURSO" />
-                        <x-gdd.table.th text="NRO_IMPONIBLE" />
-                        <x-gdd.table.th text="CUOTA" />
+                        <x-gdd.table.th text="IMPONIBLE" />
                         <x-gdd.table.th text="ANIO" />
+                        <x-gdd.table.th text="CUOTA" />
+                        <x-gdd.table.th text="MONTO_TOTAL_ORIGEN" />
+                        <x-gdd.table.th text="MONTO_TOTAL_INTERES" />
+                        <x-gdd.table.th text="MONTO_TOTAL_DLNYF" />
                         <x-gdd.table.th text="MONTO_TOTAL" />
                         <x-gdd.table.th text="FECHA_VTO" />
                         <x-gdd.table.th text="SITUACION" />
-                        <x-gdd.table.th text="ESTADO" />
+                        <x-gdd.table.th text="NRO_PLAN" />
+                        <x-gdd.table.th text="ID_GESTION" />
                     </tr>
                 </thead>
                 <tbody class="text-gray-700 p-3"></tbody>
@@ -63,94 +67,121 @@
     <script src="{{ asset('datatable/jqueryDataTables.min.js') }}"></script>
 
     <script>
-        // Almacenar los IDs seleccionados
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchDataAndInitializeTable();
+        });
+
         let selectedRows = new Set();
 
         function fetchDataAndInitializeTable() {
+            $('#loader').removeClass('hidden');
+            $('#deudoresTable').addClass('hidden');
+
             fetch("{{ route('deudor.data') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
-                body: JSON.stringify({ example: "data" }) // Esto se ajustará si necesitas enviar datos iniciales
+                body: JSON.stringify({ example: "data" })
             })
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
             .then(data => {
-                $('#deudoresTable').DataTable({
-                    responsive: true,
-                    data: data.data,
-                    language: {
-                        lengthMenu: "Mostrar _MENU_",
-                        search: "Buscar:",
-                        info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                        infoEmpty: "No hay registros disponibles",
-                        infoFiltered: "(filtrado de _MAX_ registros en total)",
-                        paginate: {
-                            first: "Primero",
-                            last: "Último",
-                            next: "Siguiente",
-                            previous: "Anterior"
-                        },
-                        zeroRecords: "No se encontraron resultados",
-                        emptyTable: "No hay datos disponibles en la tabla"
-                    },
-                    initComplete: function () {
-                        $('#deudoresTable_filter').addClass('mb-4');
-                        $('#deudoresTable_filter label').addClass('flex flex-col');
-                        $('#deudoresTable_filter input').addClass('border-2 border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500');
-                        $('#deudoresTable_info').addClass('my-2');
-                        $('#deudoresTable_paginate').addClass('block md:flex space-x-2 items-center justify-end');
-                        $('#deudoresTable_length').addClass('flex justify-end');
-                        $('#deudoresTable_length label').addClass('flex flex-col');
-                        $('#deudoresTable_length select').addClass('border-2 border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500');
-                        stylePagination();
-                    },
-                    columns: [
-                        {
-                            data: null,
-                            orderable: false,
-                            searchable: false,
-                            width: "1%",
-                            className: "text-center",
-                            render: function (data, type, row) {
-                                const id = `${row.RECURSO}-${row.NRO_IMPONIBLE}-${row.ANIO}-${row.CUOTA}-${row.MONTO_TOTAL}`;
-                                return `<input type="checkbox" class="checkbox" ${row.GESTION_ID ? 'disabled' : '' }  data-id="${id}"
-                                    ${selectedRows.has(id) ? 'checked' : ''}>`;
-                            }
-                        },
-                        { data: 'RECURSO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'NRO_IMPONIBLE', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'CUOTA', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'ANIO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'MONTO_TOTAL', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'FECHA_VTO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'SITUACION', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                        { data: 'ESTADO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
-                    ],
-                    rowCallback: function(row) {
-                        $(row).addClass('bg-white border-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800');
-                    },
-                    drawCallback: function () {
-                        stylePagination();
-                        $('.checkbox').off('change').on('change', function () {
-                            const id = $(this).data('id');
-                            if (this.checked) {
-                                selectedRows.add(id);
-                            } else {
-                                selectedRows.delete(id);
-                            }
-                        });
-                        $('#loader').addClass('hidden');
-                        $('#deudoresTable').removeClass('hidden');
-                        $('#submitSelected').removeClass('hidden');
-                    }
-                });
+                initializeDataTable(data);
             })
-            .catch(error => console.error('Error fetching data:', error));
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                if (error instanceof Error) {
+                    console.error("Message:", error.message);
+                    console.error("Stack:", error.stack);
+                }
+            });
+        }
+
+        function initializeDataTable(data) {
+            if ($.fn.dataTable.isDataTable('#deudoresTable')) {
+                $('#deudoresTable').DataTable().destroy();
+                $('#deudoresTable tbody').empty();
+            }
+
+            $('#deudoresTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                data: data.data,
+                language: {
+                    lengthMenu: "Mostrar _MENU_",
+                    search: "Buscar:",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty: "No hay registros disponibles",
+                    infoFiltered: "(filtrado de _MAX_ registros en total)",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "No hay datos disponibles en la tabla"
+                },
+                initComplete: function () {
+                    $('#deudoresTable_filter').addClass('mb-4');
+                    $('#deudoresTable_filter label').addClass('flex flex-col');
+                    $('#deudoresTable_filter input').addClass('border-2 border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500');
+                    $('#deudoresTable_info').addClass('my-2');
+                    $('#deudoresTable_paginate').addClass('block md:flex space-x-2 items-center justify-end');
+                    $('#deudoresTable_length').addClass('flex justify-end');
+                    $('#deudoresTable_length label').addClass('flex flex-col');
+                    $('#deudoresTable_length select').addClass('border-2 border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500');
+                    stylePagination();
+                },
+                columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        width: "1%",
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            const id = `${row.RECURSO}-${row.IMPONIBLE}-${row.ANIO}-${row.CUOTA}-${row.MONTO_TOTAL}`;
+                            return `<input type="checkbox" class="checkbox" ${row.ID_GESTION ? 'disabled' : '' }  data-id="${id}"
+                                ${selectedRows.has(id) ? 'checked' : ''}>`;
+                        }
+                    },
+                    { data: 'RECURSO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'IMPONIBLE', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'ANIO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'CUOTA', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'MONTO_TOTAL_ORIGEN', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'MONTO_TOTAL_INTERES', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'MONTO_TOTAL_DLNYF', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'MONTO_TOTAL', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'FECHA_VTO', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'SITUACION', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'NRO_PLAN', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                    { data: 'ID_GESTION', render: data => `<span class="font-medium text-sm text-slate-600 dark:text-slate-200">${data}</span>` },
+                ],
+                rowCallback: function(row) {
+                    $(row).addClass('bg-white border-1 border-slate-200 dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800');
+                },
+                drawCallback: function () {
+                    stylePagination();
+                    $('.checkbox').off('change').on('change', function () {
+                        const id = $(this).data('id');
+                        if (this.checked) {
+                            selectedRows.add(id);
+                        } else {
+                            selectedRows.delete(id);
+                        }
+                    });
+                    $('#loader').addClass('hidden');
+                    $('#deudoresTable').removeClass('hidden');
+                    $('#submitSelected').removeClass('hidden');
+                }
+            });
         }
 
         function stylePagination() {
@@ -158,35 +189,6 @@
             $('#deudoresTable_paginate .current').addClass('px-4 py-2 bg-blue-500 text-white rounded-lg');
             $('.ellipsis').addClass('px-4 py-2 bg-slate-400 text-white rounded-lg hover:bg-slate-500');
         }
-
-        // Función para enviar los datos seleccionados por POST
-        $('#submitSelected').on('click', function () {
-            const selectedData = Array.from(selectedRows).map(id => {
-                const [recurso, nro, anio, cuota, total] = id.split('-');
-                return [recurso, nro, anio, cuota, total]; // Devuelve un array con los 4 valores
-            });
-
-            fetch("{{ route('gdd.gestion.create') }}", { // Ajusta la ruta según tu backend
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ selected: selectedData }) // Envía el array de arrays
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Datos enviados con éxito:', data);
-                window.location.assign("/gdd/gestion");
-            })
-            .catch(error => console.error('Error submitting data:', error));
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchDataAndInitializeTable();
-        });
     </script>
+
 @endpush

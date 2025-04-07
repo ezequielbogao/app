@@ -26,7 +26,7 @@
     <body>
         <div class="w-full flex flex-col justify-center bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-50 bg-pattern">
             @include('gdd.layouts.header')
-            <div class="flex">
+            <div class="flex" style="overflow-x:hidden !important;">
                 @include('gdd.layouts.menu')
                 @yield('content')
             </div>

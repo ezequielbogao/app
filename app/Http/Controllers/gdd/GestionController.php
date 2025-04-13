@@ -24,6 +24,7 @@ class GestionController extends Controller
 	public function create(Request $r)
 	{
 		$r  = request();
+
 		$validator = Validator::make($r->all(), [
 			'selected'   => 'required|array',
 		], [
@@ -31,11 +32,6 @@ class GestionController extends Controller
 		]);
 
 		if ($validator->fails()) return redirect()->back()->withInput()->withErrors($validator);
-
-		// $deudores = DB::connection('dwh')
-		// 	->table('Rafam_Comercios')
-		// 	->whereIn('NRO_COMERCIO', $r->selected)
-		// 	->get(['NRO_COMERCIO', 'NOMBRE', 'RUBRO', 'CUIT']);
 
 		$deudores = $this->formatearImponibles($r->selected);
 

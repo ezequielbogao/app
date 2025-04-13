@@ -1,29 +1,3 @@
-# services:
-#   # === === === === === === === === === === === ===
-#   #   Main PHP App
-#   # === === === === === === === === === === === ===
-#   app:
-#     build:
-#       context: ./
-#       dockerfile: ./docker/php/Dockerfile
-#       args:
-#         - "USER=$APP_USER"
-#         - "UID=$APP_UID"
-#         - "GID=$APP_GID"
-#     image: ${APP_NAME}-app
-#     restart: unless-stopped
-#     container_name: ${APP_NAME}-app
-#     command: ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000", "--watch"]
-#     hostname: app
-#     working_dir: /var/www
-#     ports:
-#       - $APP_PORT:8000
-#     volumes:
-#       - .:/var/www
-#       - /etc/localtime:/etc/localtime:ro
-#       - /etc/timezone:/etc/timezone:ro
-
-
 services:
     laravel:
         image: laravelphp/php-fpm

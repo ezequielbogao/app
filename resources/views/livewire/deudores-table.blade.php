@@ -17,8 +17,7 @@
         </div>
     @endif
 
-    <div id="tableContainer" class="max-h-[60vh] overflow-y-auto bg-white  rounded-sm">
-    {{-- <div id="tableContainer" class="max-h-[60vh] overflow-y-auto bg-white shadow-md rounded-lg" wire:scroll.debounce.300ms="loadMore"> --}}
+    <div id="tableContainer" class="max-h-[60vh] overflow-y-auto bg-white  rounded-sm w-ful">
         <table class="w-full border-collapse" id="deudoresTable">
             <thead>
                 <tr class="bg-gray-200 text-gray-700 sticky top-0 z-10">

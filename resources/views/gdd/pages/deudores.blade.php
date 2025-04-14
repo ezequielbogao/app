@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 p-4">
+        <div class="overflow-auto bg-white dark:bg-slate-800 mt-5 border-slate-100 dark:border-slate-700 w-full">
             @livewire('deudores-table')
         </div>
 

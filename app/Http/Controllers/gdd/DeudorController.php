@@ -35,7 +35,7 @@ class DeudorController extends Controller
 
         // Parámetros de DataTables
         $start = $request->input('start', 0);
-        $length = $request->input('length', 50); // Limitamos a 50 por página
+        $length = $request->input('length', 10); // Limitamos a 50 por página
         $search = $request->input('search.value', '');
         $orderColumnIndex = $request->input('order.0.column', 0);
         $orderDirection = $request->input('order.0.dir', 'asc');
@@ -64,9 +64,7 @@ class DeudorController extends Controller
         if ($search !== '' && $search !== null) {
             $query->where(function ($q) use ($search) {
                 $q->where('RECURSO', 'like', "%{$search}%")
-                    ->orWhere('IMPONIBLE', 'like', "%{$search}%")
-                    ->orWhere('ANIO', '=', $search) // Exacto para números
-                    ->orWhere('CUOTA', '=', $search);
+                    ->orWhere('IMPONIBLE', 'like', "%{$search}%");
             });
         }
 

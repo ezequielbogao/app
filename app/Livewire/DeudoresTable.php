@@ -44,7 +44,9 @@ class DeudoresTable extends Component
             ->when($this->search, function ($query) {
                 $query->where('RECURSO', 'like', "%{$this->search}%")
                     ->orWhere('IMPONIBLE', 'like', "%{$this->search}%");
-            });
+            })
+            ->orderBy('RECURSO', 'DESC')
+            ->orderBy('IMPONIBLE', 'DESC');
     }
 
     public function render()

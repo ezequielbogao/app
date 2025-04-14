@@ -10,6 +10,8 @@ class CuentaCorriente extends Model
     protected $table = 'RAFAM_CC';
     protected $primaryKey = null;
 
+    public $timestamps = false;
+
     protected function keyID(): Attribute
     {
         return new Attribute(

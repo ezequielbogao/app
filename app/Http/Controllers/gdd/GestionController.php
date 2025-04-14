@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Gdd;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gdd\Gestion;
+use App\Models\Gdd\GestionDetalle;
+use App\Models\Gdd\GestionEstado;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,34 +25,58 @@ class GestionController extends Controller
 
 	public function create(Request $r)
 	{
-		$r  = request();
-
-		$validator = Validator::make($r->all(), [
-			'selected'   => 'required|array',
-		], [
-			'selected.required' => 'Debes seleccionar al menos un deudor',
-		]);
-
-		if ($validator->fails()) return redirect()->back()->withInput()->withErrors($validator);
-
-		$deudores = $this->formatearImponibles($r->selected);
-
-		foreach ($deudores as $deudor) {
-			$recurso 		= $deudor[0];
-			$nro_imponible 	= $deudor[1];
-			$periodos 		= $deudor[2];
-			$monto_total 	= $deudor[3];
-			Gestion::create([
-				'RECURSO'       => $recurso,
-				'NRO_IMPONIBLE' => $nro_imponible,
-				'PERIODOS'      => $periodos,
-				'MONTO_TOTAL'   => $monto_total,
-				'INICIO'        => now()->format('d-m-Y'),
-				// 'FINALIZACION'  => '',
-				'ESTADO'        => 'Vigente',
-				'OBSERVACION'   => '-',
+		try {
+			$r  = request();
+			$validator = Validator::make($r->all(), [
+				'selected'   => 'required|array',
+			], [
+				'selected.required' => 'Debes seleccionar al menos un deudor',
 			]);
+
+			if ($validator->fails()) return redirect()->back()->withInput()->withErrors($validator);
+
+			$deudores = $this->formatearImponibles($r->selected);
+
+			foreach ($deudores as $deudor) {
+				$RECURSO 			= $deudor[0];
+				$IMPONIBLE 			= $deudor[1];
+				$PERIODOS_ADEUDADOS	= $deudor[2];
+				$DEUDA_TOTAL 		= $deudor[3];
+
+				$gestion = Gestion::create([
+					'RECURSO'               => $RECURSO,
+					'IMPONIBLE'             => $IMPONIBLE,
+					'PERIODOS_ADEUDADOS'    => $PERIODOS_ADEUDADOS,
+					'DEUDA_TOTAL'           => $DEUDA_TOTAL,
+					'INICIO_GESTION'        => now()->format('Y-m-d'),
+					'ESTADO_GESTION'        => 'VIGENTE',
+					'FORMA_DE_PAGO' 		=> 'PLAN DE PAG0',
+
+				]);
+
+				if (!$gestion) {
+					throw new \Exception("No se pudo crear la gestión para imponible $IMPONIBLE");
+				}
+
+				$detalle = GestionDetalle::create([
+					'ID_GESTION' 	=> $gestion->id,
+					'FECHA' 		=> now()->format('Y-m-d'),
+					'ACCION' 		=> 'NOTIFICACIÓN',
+					'CONTACTO' 		=> '',
+					'RESULTADO' 	=> 'EL CONTACTO NO CORRESPONDE',
+					'RESPUESTA' 	=> '',
+					'EMPLEADO' 		=> '',
+				]);
+
+				if (!$detalle) {
+					throw new \Exception("No se pudo crear el detalle de gestión para imponible $IMPONIBLE");
+				}
+			}
+		} catch (\Throwable $th) {
+
+			throw $th;
 		}
+
 
 		return $this->apiResponse(true, null, 'Gestión creada con exito');
 	}

@@ -9,7 +9,7 @@ Route::prefix('gdd')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('gdd.login');
     Route::get('/', [DeudorController::class, 'dashboard'])->name('gdd.dashboard');
     Route::get('/deudores', [DeudorController::class, 'index'])->name('gdd.deudores');
-    Route::post('/deudor-data', [DeudorController::class, 'getData'])->name('deudor.data');
+    // Route::post('/deudor-data', [DeudorController::class, 'getData'])->name('deudor.data');
 
     Route::get('/gestiones', [GestionController::class, 'index'])->name('gdd.gestiones.index');
     Route::get('/gestiones/{id}', [GestionController::class, 'edit'])->name('gdd.gestiones.edit');

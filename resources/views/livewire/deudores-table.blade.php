@@ -86,7 +86,7 @@
     document.addEventListener('DOMContentLoaded', function () {
 
         let selectedRows = new Set();
-
+        const submitGestion = document.querySelector('#submitGestion');
         const tableContainer = document.getElementById('tableContainer');
         const loadingMore = document.getElementById('loadingMore');
         let isLoading = false;
@@ -101,6 +101,7 @@
             console.log('La carga ha terminado');
             isLoading = false;
             loadingMore.classList.add('hidden'); // Ocultamos el indicador de carga
+            submitGestion.classList.remove('disabled');
         });
 
         tableContainer.addEventListener('scroll', function () {
@@ -111,7 +112,7 @@
                 isLoading = true;
                 loadingMore.classList.remove('hidden');
                 Livewire.dispatch('loadMore'); // Llamamos al método loadMore
-
+                submitGestion.classList.add('disabled');
                 // // También puedes desactivar el scroll temporalmente
                 // setTimeout(() => {
                 //     isLoading = false;
@@ -126,7 +127,7 @@
             });
         });
 
-        document.querySelector('#submitGestion').addEventListener('click', function () {
+        submitGestion.addEventListener('click', function () {
             const selectedData = Array.from(selectedRows).map(id => {
                 const [recurso, imponible, anio, cuota, total] = id.split('-');
                 return [recurso, imponible, anio, cuota, total]; // Devuelve un array con los 4 valores

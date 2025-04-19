@@ -24,6 +24,15 @@ class DeudoresTable extends Component
         $this->loadedRows = 0;
     }
 
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div>
+            <span>Cargando...</span>
+        </div>
+        HTML;
+    }
+
     protected function getDeudoresQuery()
     {
         return DB::table('RAFAM_CC')
@@ -42,8 +51,10 @@ class DeudoresTable extends Component
                 'ID_GESTION'
             ])
             ->when($this->search, function ($query) {
-                $query->where('RECURSO', 'like', "%{$this->search}%")
-                    ->orWhere('IMPONIBLE', 'like', "%{$this->search}%");
+                $query->where(function ($q) {
+                    $q->where('RECURSO', 'like', "%{$this->search}%")
+                        ->orWhere('IMPONIBLE', 'like', "%{$this->search}%");
+                });
             })
             ->orderBy('RECURSO', 'DESC')
             ->orderBy('IMPONIBLE', 'DESC');
@@ -51,11 +62,11 @@ class DeudoresTable extends Component
 
     public function render()
     {
-        $deudores = $this->getDeudoresQuery()
-            ->limit($this->loadedRows + $this->limit)
-            ->get();
 
-        $hasMore = $this->getDeudoresQuery()->count() > $this->loadedRows + $this->limit;
+        $query = $this->getDeudoresQuery();
+
+        $deudores = $query->limit($this->loadedRows + $this->limit)->get();
+        $hasMore = $query->count() > ($this->loadedRows + $this->limit);
 
         return view('livewire.deudores-table', [
             'deudores'  => $deudores,

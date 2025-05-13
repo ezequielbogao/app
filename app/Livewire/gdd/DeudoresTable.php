@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Gdd;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -68,7 +68,7 @@ class DeudoresTable extends Component
         $deudores = $query->limit($this->loadedRows + $this->limit)->get();
         $hasMore = $query->count() > ($this->loadedRows + $this->limit);
 
-        return view('livewire.deudores-table', [
+        return view('gdd.livewire.deudores-table', [
             'deudores'  => $deudores,
             'hasMore'   => $hasMore
         ]);
